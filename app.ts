@@ -56,7 +56,7 @@ app.put('/messages/:id', (req: Request, res: Response) => {
 
   if(typeof text !== 'string' || text.trim() === '')
   {
-    return res.status(400).json({ error: 'Text must be a non-empty string '})
+    return res.status(400).json({ error: 'Text must be a non-empty string'})
   }
 
   message.text = text
