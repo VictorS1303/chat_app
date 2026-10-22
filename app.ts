@@ -1,82 +1,191 @@
 import express, { type Express, type Request, type Response } from 'express'
+import connection from './messages.js'
+
 import { messages } from './messages_data/messages.js'
 
 const app: Express = express()
 app.use(express.json())
 
-
 // CREATE //
-app.post('/messages', (req: Request, res: Response) => {
-  const message = { id: messages.length + 1, ...req.body}
-  
-  const duplicateId = messages.some((msg) => msg.id === message.id)
-
-  if(duplicateId)
+app.post('/messages', async (req: Request, res: Response) =>
+{
+  try
   {
-    return res.status(409).json({error: `Message with id ${message.id} already exists`})
+    const { id, user, text, timestamp } = req.body
+    
+    if(!Number.isInteger(id) || id <= 0)
+    {
+      return res.status(400).json({ error: 'Invalid message ID'})
+    }
+
+    const existingMessage = await connection.query(
+      'SELECT id FROM messages WHERE id = $1',
+      [id]
+    )
+
+    if(existingMessage.rowCount !== 0)
+    {
+      return res.status(409).json({ error: `Message with id ${id} already exists` })
+    }
+
+    const result = await connection.query
+    (
+      'INSERT INTO messages (id, "user", text, timestamp) VALUES ($1, $2, $3, $4) RETURNING *',
+      [id, user, text, timestamp]
+    )
+
+    return res.status(201).json(result.rows[0])
   }
-
-  messages.push(message)
-  res.status(201).json(`Message with id ${message.id} successfully added`)
+  catch(error)
+  {
+      console.error('Database query failed:', error)
+      res.status(500).json({ error: 'Database query failed'})
+  }
 })
-
 
 // READ //
 
-// Get all messages
-app.get('/messages', (req: Request, res: Response) => {
-  res.json(messages)
+// Get all messages from PostgreSQL
+app.get('/messages', async (req: Request, res: Response) =>
+{
+  try
+  {
+    const result = await connection.query('SELECT * FROM messages ORDER BY id')
+    console.log(result.rows)
+
+    res.json(result.rows)
+  }
+  catch(error)
+  {
+      console.error('Database query failed:', error)
+      res.status(500).json({ error: 'Database query failed'})
+  }
 })
 
 // Get single message by id
-app.get('/messages/:id', (req: Request, res: Response) => {
-  const id = Number(req.params.id)
-  const message = messages.find((message) => message.id === id)
-
-  if(!message)
+app.get('/messages/:id', async (req: Request, res: Response) => {
+  try
   {
-    return res.status(404).json(`Message with id ${id} not found`)
-  }
+    const id = Number(req.params.id)
+    if(!Number.isInteger(id) || id <= 0)
+    {
+      return res.status(400).json({ error: 'Invalid message ID'})
+    }
 
-  res.json(message)
+    const result = await connection.query('SELECT * FROM messages WHERE id = $1', [id])
+
+    if(result.rows.length === 0)
+    {
+      return res.status(404).json({ error: `Message with id ${id} not found`})
+    }
+
+    res.json(result.rows[0])
+  }
+  catch(error)
+  {
+      console.error('Database query failed:', error)
+      res.status(500).json({ error: 'Database query failed' })
+  }
 })
 
 
 // UPDATE //
-app.put('/messages/:id', (req: Request, res: Response) => {
-  const id = Number(req.params.id)
-  const message = messages.find((message) => message.id === id)
 
-  if(!message)
+/*
+  For now, this method essentially does the same as the PATCH method underneath, since only the text is to be updated at the moment.
+*/ 
+app.put('/messages/:id', async (req: Request, res: Response) =>
+{
+  try
   {
-    return res.status(404).json(`Message with id ${id} not found`)
+    const id = Number(req.params.id)
+    
+    if(!Number.isInteger(id) || id <= 0)
+    {
+      return res.status(400).json({ error: 'Invalid message ID'})
+    }
+
+    const { text } = req.body
+      
+    const result = await connection.query('UPDATE messages SET text = $1 WHERE id = $2', [text, id]) 
+
+    if(result.rowCount === 0)
+    {
+      return res.status(404).json({ error: `No message found with id ${id}`})
+    }
+
+    return res.status(200).json({ message: `Message with ${id} successfully updated.`})
+  }
+  catch(error)
+  {
+    console.error('Database query failed:', error)
+    res.status(500).json({ error: 'Database query failed' })
   }
 
-  const { text } = req.body
-
-  if(typeof text !== 'string' || text.trim() === '')
-  {
-    return res.status(400).json({ error: 'Text must be a non-empty string'})
-  }
-
-  message.text = text
-
-  res.json(message)
 })
 
+/*
+  For now, this does the same as the PUT method above, but it might become necessary later, if more fields can be edited.
+*/ 
+app.patch('/messages/:id', async (req: Request, res: Response) => {
+  try
+  {
+    const id = Number(req.params.id)
+    
+    if(!Number.isInteger(id) || id <= 0)
+    {
+      return res.status(400).json({ error: 'Invalid message ID'})
+    }
+
+    const { text } = req.body
+
+    if(text === undefined)
+    {
+      return res.status(400).json({ error: 'No fields provided to update'})
+    }
+
+    const result = await connection.query('UPDATE messages SET text = $1 WHERE id = $2', [text, id])
+
+    if(result.rowCount === 0)
+    {
+      return res.status(404).json({ error: `No message with id ${id} was found`})
+    }
+
+    return res.status(200).json({ message: `Message with id ${id} successfully updated`})
+  }
+  catch(error)
+  {
+    console.error('Database query failed:', error)
+    res.status(500).json({ error: 'Database query failed' })
+  }
+})
 
 // DELETE //
-app.delete('/messages/:id', (req: Request, res: Response) => {
-  const id = Number(req.params.id)
-  const messageIndex = messages.findIndex((message) => message.id === id)
+app.delete('/messages/:id', async (req: Request, res: Response) => {
+  try
+  { 
+    const id = Number(req.params.id)
 
-  if(messageIndex === -1)
-  {
-    return res.status(404).json(`Message with id ${id} not found`)
+    if(!Number.isInteger(id) || id <= 0)
+    {
+      return res.status(400).json({ error: 'Invalid message ID'})
+    }
+
+    const result = await connection.query('DELETE FROM messages WHERE id = $1', [id])
+
+    if(result.rowCount === 0)
+    {
+      return res.status(404).json({ error: `No message found with id ${id}`})
+    }
+
+    return res.status(200).json({ message: `Message with ${id} successfully deleted.`})
   }
-
-  messages.splice(messageIndex, 1)
-  res.status(204).send()
+  catch(error)
+  {
+    console.error('Database query failed:', error)
+    res.status(500).json({ error: 'Database query failed' })
+  }
 })
+
 
 export default app
