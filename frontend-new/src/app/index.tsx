@@ -5,6 +5,7 @@ import { Text, View } from 'react-native'
 import Spacer from '@/components/spacers/Spacer'
 import Icon from '@/components/icons/Icon'
 import { faComments } from '@fortawesome/free-solid-svg-icons'
+import MessageCard from '@/components/cards/MessageCard'
 
 
 const HomeScreen = () =>
@@ -33,6 +34,7 @@ const HomeScreen = () =>
                     Chat
                 </Text>
             </Link>
+
         </View>
     )
 }
