@@ -1,9 +1,9 @@
 import { Pressable } from 'react-native'
-import type { SendMessageButton as SendMessageButtonProps } from '@/lib/types/buttons'
+import type { BaseButton as BaseButtonProps } from '@/lib/types/buttons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 
-const SendMessageButton = ({ onPress }: SendMessageButtonProps) =>
+const SendMessageButton = ({ onPress }: BaseButtonProps) =>
 {
     return (
         <Pressable

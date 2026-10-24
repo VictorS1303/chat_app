@@ -1,6 +1,7 @@
 import type { MessageCard as MessageCardProps } from '@/lib/types/cards.ts'
 import { Text, View } from 'react-native'
 import BaseCard from './BaseCard'
+import MessageActionButtonsContainer from '../containers/MessageActionButtonsContainer'
 
 const MessageCard = ({ id, text, sender, send_at }: MessageCardProps) =>
 {
@@ -9,8 +10,9 @@ const MessageCard = ({ id, text, sender, send_at }: MessageCardProps) =>
             className="bg-white self-start flex flex-col justify-between min-h-[150px] w-full p-4"
             id={id}
             head={
-                <View>
+                <View className="flex flex-row items-center justify-between mb-4">
                     <Text className="text-md">{sender}</Text>
+                    <MessageActionButtonsContainer />
                 </View>
             }
             body={

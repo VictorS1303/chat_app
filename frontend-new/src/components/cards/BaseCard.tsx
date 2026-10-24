@@ -5,7 +5,7 @@ const BaseCard = ({ className = "flex flex-col justify-between", id, head, body,
 {
     return (
         <View className={className} nativeID={id}>
-            <View>
+            <View className="w-full">
                 {head}
             </View>
             <View className="mt-2 mb-4">
