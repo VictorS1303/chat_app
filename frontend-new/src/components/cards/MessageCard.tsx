@@ -2,11 +2,11 @@ import type { MessageCard as MessageCardProps } from '@/lib/types/cards.ts'
 import { Text, View } from 'react-native'
 import BaseCard from './BaseCard'
 
-const MessageCard = ({ id, text, sender, send_at}: MessageCardProps) =>
+const MessageCard = ({ id, text, sender, send_at }: MessageCardProps) =>
 {
     return (
         <BaseCard
-            className="bg-white self-start flex flex-col justify-between h-fit min-h-[150px] max-w-full p-4"
+            className="bg-white self-start flex flex-col justify-between min-h-[150px] w-full p-4"
             id={id}
             head={
                 <View>
@@ -14,7 +14,7 @@ const MessageCard = ({ id, text, sender, send_at}: MessageCardProps) =>
                 </View>
             }
             body={
-                <Text className="text-lg">{text}</Text>
+                <Text className="text-lg flex-shrink">{text}</Text>
             }
             footer={
                 <Text className="text-gray-300 self-end">{send_at}</Text>

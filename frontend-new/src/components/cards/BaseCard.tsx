@@ -1,7 +1,7 @@
 import type { BaseCard as BaseCardProps } from '@/lib/types/cards.ts'
 import { View } from 'react-native'
 
-const BaseCard = ({ className="flex flex-col justify-between", id, head, body, footer, children }: BaseCardProps) => 
+const BaseCard = ({ className = "flex flex-col justify-between", id, head, body, footer, children }: BaseCardProps) =>
 {
     return (
         <View className={className} nativeID={id}>
