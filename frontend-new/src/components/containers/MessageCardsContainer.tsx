@@ -10,7 +10,7 @@ import EditMessageModal from '../modals/EditMessageModal'
 import DeleteMessageModal from '../modals/DeleteMessageModal'
 import { updateMessage, deleteMessage } from '@/lib/server/server'
 
-const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
+const MessageCardsContainer = ({ messages, onMessageChanged }: MessageCardsContainerProps) =>
 {
     const [selectedMessageId, setSelectedMessageId] = useState<number | string | null>(null)
     const [messageToDeleteId, setMessageToDeleteId] = useState<number | string | null>(null)
@@ -32,6 +32,7 @@ const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
         try
         {
             await updateMessage(selectedMessageId, text)
+            await onMessageChanged()
             setSelectedMessageId(null)
         }
         catch (error)
@@ -55,6 +56,7 @@ const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
         try
         {
             await deleteMessage(messageToDeleteId)
+            await onMessageChanged()
             setMessageToDeleteId(null)
         }
         catch (error)
@@ -78,7 +80,7 @@ const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
                 showsVerticalScrollIndicator={true}
             >
                 {
-                    messages && messages.length > 0 ? (
+                    messages.length > 0 ? (
                         messages.map((message) => (
                             <MessageCard
                                 key={message.id}

@@ -14,61 +14,29 @@ const ChatScreen = () =>
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
+    const fetchMessages = async () =>
+    {
+        try
+        {
+            setLoading(true)
+            const response = await getMessages()
+
+            setMessages(response)
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch messages:', error)
+        }
+        finally
+        {
+            setLoading(false)
+        }
+    }
+
     useEffect(() =>
     {
-        const fetchData = async () =>
-        {
-            try
-            {
-                setLoading(true)
-                const response = await getMessages()
-
-                setMessages(response)
-            }
-            catch (error)
-            {
-                console.log("Failed to fetch messages: ", error)
-            }
-            finally
-            {
-                setLoading(false)
-            }
-        }
-        fetchData()
+        fetchMessages()
     }, [])
-
-    // const messages = [
-    //     {
-    //         id: 1,
-    //         text: 'Hey, how are you?',
-    //         sender: 'Victor',
-    //         send_at: '10:30'
-    //     },
-    //     {
-    //         id: 2,
-    //         text: 'I am doing well, thanks! How about you? youyouyouyouyouyou',
-    //         sender: 'Alex',
-    //         send_at: '10:31'
-    //     },
-    //     {
-    //         id: 3,
-    //         text: 'Doing great!',
-    //         sender: 'Victor',
-    //         send_at: '10:32'
-    //     },
-    //     {
-    //         id: 4,
-    //         text: 'Doing great!',
-    //         sender: 'Victor',
-    //         send_at: '10:32'
-    //     },
-    //     {
-    //         id: 5,
-    //         text: 'Doing great!',
-    //         sender: 'Victor',
-    //         send_at: '10:32'
-    //     }
-    // ]
 
     return (
         <KeyboardAvoidingView
@@ -82,7 +50,10 @@ const ChatScreen = () =>
                     onPress={Keyboard.dismiss}
                 >
                     {/* Chat messages go here */}
-                    <MessageCardsContainer messages={messages} />
+                    <MessageCardsContainer
+                        messages={messages}
+                        onMessageChanged={fetchMessages}
+                    />
 
                 </Pressable>
 

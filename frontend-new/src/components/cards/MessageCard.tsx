@@ -8,7 +8,7 @@ const MessageCard = ({ id, text, sender, send_at, onEdit, onDelete }: MessageCar
 {
     return (
         <BaseCard
-            className="bg-white self-start flex flex-col justify-between min-h-[150px] w-full p-4"
+            className="bg-white self-start flex flex-col justify-between min-h-[150px] w-full p-4 rounded-xl"
             id={id}
             head={
                 <View className="flex flex-row items-center justify-between mb-4">

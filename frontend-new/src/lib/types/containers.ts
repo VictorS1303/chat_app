@@ -3,6 +3,7 @@ import { MessageCard as MessageCardProps } from '@/lib/types/cards'
 export type MessageCardsContainer =
 {
     messages: MessageCardProps[]
+    onMessageChanged: () => Promise<void>
 }
 
 export type MessageActionButtonsContainer =
