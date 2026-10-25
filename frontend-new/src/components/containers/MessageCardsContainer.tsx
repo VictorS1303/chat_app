@@ -2,6 +2,7 @@ import MainView from '../views/MainView'
 import MessageCard from '@/components/cards/MessageCard'
 import { ScrollView, Text } from 'react-native'
 import type { MessageCardsContainer as MessageCardsContainerProps } from '@/lib/types/containers'
+import { formatTimeStamp } from '@/lib/formatters/formatters'
 
 const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
 {
@@ -27,7 +28,7 @@ const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
                                 id={message.id}
                                 text={message.text}
                                 sender={message.sender}
-                                send_at={message.send_at}
+                                send_at={formatTimeStamp(message.send_at)}
                             />
                         ))
                     ) : (
