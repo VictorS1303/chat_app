@@ -9,6 +9,7 @@ import MessageCard from '@/components/cards/MessageCard'
 import EditMessageModal from '../modals/EditMessageModal'
 import DeleteMessageModal from '../modals/DeleteMessageModal'
 import { updateMessage, deleteMessage } from '@/lib/server/server'
+import Toast from 'react-native-toast-message'
 
 const MessageCardsContainer = ({ messages, onMessageChanged }: MessageCardsContainerProps) =>
 {
@@ -33,6 +34,13 @@ const MessageCardsContainer = ({ messages, onMessageChanged }: MessageCardsConta
         {
             await updateMessage(selectedMessageId, text)
             await onMessageChanged()
+
+            Toast.show({
+                type: 'success',
+                text1: 'Success!',
+                text2: 'Message updated successfully!'
+            })
+
             setSelectedMessageId(null)
         }
         catch (error)
@@ -57,6 +65,13 @@ const MessageCardsContainer = ({ messages, onMessageChanged }: MessageCardsConta
         {
             await deleteMessage(messageToDeleteId)
             await onMessageChanged()
+
+            Toast.show({
+                type: 'success',
+                text1: 'Success!',
+                text2: 'Message deleted successfully!'
+            })
+
             setMessageToDeleteId(null)
         }
         catch (error)
