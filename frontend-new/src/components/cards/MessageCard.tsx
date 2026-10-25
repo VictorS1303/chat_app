@@ -3,7 +3,7 @@ import { Text, View } from 'react-native'
 import BaseCard from './BaseCard'
 import MessageActionButtonsContainer from '../containers/MessageActionButtonsContainer'
 
-const MessageCard = ({ id, text, sender, send_at }: MessageCardProps) =>
+const MessageCard = ({ id, text, sender, send_at, onEdit }: MessageCardProps) =>
 {
     return (
         <BaseCard
@@ -12,7 +12,7 @@ const MessageCard = ({ id, text, sender, send_at }: MessageCardProps) =>
             head={
                 <View className="flex flex-row items-center justify-between mb-4">
                     <Text className="text-md">{sender}</Text>
-                    <MessageActionButtonsContainer />
+                    <MessageActionButtonsContainer messageId={id} onPress={onEdit} />
                 </View>
             }
             body={

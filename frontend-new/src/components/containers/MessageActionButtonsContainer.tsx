@@ -1,12 +1,13 @@
 import EditMessageButton from '@/components/buttons/message_action_buttons/EditMessageButton'
 import DeleteMessageButton from '@/components/buttons/message_action_buttons/DeleteMessageButton'
 import { View } from 'react-native'
+import type { MessageActionButtonsContainer as MessageActionButtonsContainerProps } from '@/lib/types/containers'
 
-const MessageActionButtonsContainer = () =>
+const MessageActionButtonsContainer = ({ messageId, onPress }: MessageActionButtonsContainerProps) =>
 {
     const handleEditMessage = () =>
     {
-        console.log('Edit message!')
+        onPress(messageId)
     }
 
     const handleDeleteMessage = () =>

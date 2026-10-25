@@ -1,11 +1,43 @@
-import MainView from '../views/MainView'
-import MessageCard from '@/components/cards/MessageCard'
-import { ScrollView, Text } from 'react-native'
+import { useState } from 'react'
+import { Text, ScrollView } from 'react-native'
 import type { MessageCardsContainer as MessageCardsContainerProps } from '@/lib/types/containers'
 import { formatTimeStamp } from '@/lib/formatters/formatters'
 
+import MainView from '../views/MainView'
+import MessageCard from '@/components/cards/MessageCard'
+import EditMessageModal from '../modals/EditMessageModal'
+import { updateMessage } from '@/lib/server/server'
+
 const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
 {
+    const [selectedMessageId, setSelectedMessageId] = useState<number | string | null>(null)
+    const selectedMessage = messages.find((message) => message.id === selectedMessageId)
+
+    const handleEditMessage = (messageId: number | string) =>
+    {
+        setSelectedMessageId(messageId)
+    }
+
+    const handleEditMessageSubmit = async (text: string) =>
+    {
+        if (selectedMessageId === null)
+        {
+            return
+        }
+
+        try
+        {
+            await updateMessage(selectedMessageId, text)
+
+            console.log('Message updated successfully')
+            setSelectedMessageId(null)
+        }
+        catch (error)
+        {
+            console.error('Failed to update message:', error)
+        }
+    }
+
     return (
         <MainView
             className="flex-1 px-4 py-4 justify-center"
@@ -29,6 +61,7 @@ const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
                                 text={message.text}
                                 sender={message.sender}
                                 send_at={formatTimeStamp(message.send_at)}
+                                onEdit={handleEditMessage}
                             />
                         ))
                     ) : (
@@ -36,6 +69,14 @@ const MessageCardsContainer = ({ messages }: MessageCardsContainerProps) =>
                     )
                 }
             </ScrollView>
+
+            <EditMessageModal
+                isVisible={selectedMessage !== undefined}
+                transparent={true}
+                text={selectedMessage?.text ?? ''}
+                onSubmit={handleEditMessageSubmit}
+                onClose={() => setSelectedMessageId(null)}
+            />
         </MainView>
     )
 }

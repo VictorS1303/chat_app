@@ -37,3 +37,22 @@ export const getMessages = async (): Promise<MessageCard[]> =>
 
     return response.json()
 }
+
+
+// Update Message
+export const updateMessage = async (id: string | number, text: string): Promise<{ message: string }> =>
+{
+    const response = await fetch(`${API_URL}/messages/${id}`,
+    {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+    })
+
+    if (!response.ok)
+    {
+        throw new Error('Failed to update message')
+    }
+
+    return response.json()
+}
