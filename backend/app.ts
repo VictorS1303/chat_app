@@ -1,7 +1,5 @@
 import express, { type Express, type Request, type Response } from 'express'
-import connection from './backend/messages.js'
-
-import { messages } from './messages_data/messages.js'
+import connection from './messages.js'
 
 const app: Express = express()
 app.use(express.json())
@@ -11,35 +9,24 @@ app.post('/messages', async (req: Request, res: Response) =>
 {
   try
   {
-    const { id, user, text, timestamp } = req.body
-    
-    if(!Number.isInteger(id) || id <= 0)
+    const { message } = req.body
+
+    if(typeof message !== 'string' || !message.trim())
     {
-      return res.status(400).json({ error: 'Invalid message ID'})
+      return res.status(400).json({ error: 'Message text is required' })
     }
 
-    const existingMessage = await connection.query(
-      'SELECT id FROM messages WHERE id = $1',
-      [id]
-    )
-
-    if(existingMessage.rowCount !== 0)
-    {
-      return res.status(409).json({ error: `Message with id ${id} already exists` })
-    }
-
-    const result = await connection.query
-    (
-      'INSERT INTO messages (id, "user", text, timestamp) VALUES ($1, $2, $3, $4) RETURNING *',
-      [id, user, text, timestamp]
+    const result = await connection.query(
+      'INSERT INTO messages (text) VALUES ($1) RETURNING *',
+      [message.trim()]
     )
 
     return res.status(201).json(result.rows[0])
   }
   catch(error)
   {
-      console.error('Database query failed:', error)
-      res.status(500).json({ error: 'Database query failed'})
+    console.error('Database query failed:', error)
+    res.status(500).json({ error: 'Database query failed' })
   }
 })
 

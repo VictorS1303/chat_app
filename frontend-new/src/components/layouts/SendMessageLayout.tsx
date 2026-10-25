@@ -4,22 +4,34 @@ import SendMessageButton from '@/components/buttons/SendMessageButton'
 import { View } from 'react-native'
 import { useState } from 'react'
 
+import { createMessage } from '@/lib/server/server'
+
 const SendMessageLayout = () =>
 {
     const [messageInputValue, setMessageInputValue] = useState('')
 
-    const handleMessageSubmit = () =>
+    const handleMessageSubmit = async () =>
     {
-        if (!messageInputValue.trim())
+        const message = messageInputValue.trim()
+
+        if (!message)
         {
             // Ultimately insert a toast here//
             return
         }
 
-        console.log('Message sent!')
+        try
+        {
+            const response = await createMessage(message)
+            console.log('Message sent!')
+            setMessageInputValue('')
+        }
+        catch (error)
+        {
+            console.error('Failed to send message:', error)
+        }
 
 
-        setMessageInputValue('')
     }
 
     return (

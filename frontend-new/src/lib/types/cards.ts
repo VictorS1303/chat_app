@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 
 export type BaseCard =
 {
-    id: string,
+    id: number,
     className?: string,
     head: NonNullable<ReactNode>,
     body: NonNullable<ReactNode>,
