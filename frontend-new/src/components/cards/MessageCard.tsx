@@ -1,9 +1,10 @@
+
 import type { MessageCard as MessageCardProps } from '@/lib/types/cards.ts'
 import { Text, View } from 'react-native'
 import BaseCard from './BaseCard'
 import MessageActionButtonsContainer from '../containers/MessageActionButtonsContainer'
 
-const MessageCard = ({ id, text, sender, send_at, onEdit }: MessageCardProps) =>
+const MessageCard = ({ id, text, sender, send_at, onEdit, onDelete }: MessageCardProps) =>
 {
     return (
         <BaseCard
@@ -12,7 +13,11 @@ const MessageCard = ({ id, text, sender, send_at, onEdit }: MessageCardProps) =>
             head={
                 <View className="flex flex-row items-center justify-between mb-4">
                     <Text className="text-md">{sender}</Text>
-                    <MessageActionButtonsContainer messageId={id} onPress={onEdit} />
+                    <MessageActionButtonsContainer
+                        messageId={id}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                    />
                 </View>
             }
             body={

@@ -16,4 +16,5 @@ export type MessageCard = Omit<BaseCard, 'head' | 'body' | 'footer' | 'children'
     sender: string,
     send_at: string,
     onEdit: (messageId: number | string) => void
+    onDelete: (messageId: number | string) => void
 }

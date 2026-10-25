@@ -7,6 +7,7 @@ export type MessageCardsContainer =
 
 export type MessageActionButtonsContainer =
 {
-    messageId: string | number,
-    onPress: (messageId: string | number) => void   
+    messageId: number | string,
+    onEdit: (messageId: number | string) => void,
+    onDelete: (messageId: number | string) => void
 }

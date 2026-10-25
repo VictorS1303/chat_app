@@ -56,3 +56,19 @@ export const updateMessage = async (id: string | number, text: string): Promise<
 
     return response.json()
 }
+
+// Delete Message
+export const deleteMessage = async (id: string | number): Promise<{message: string}> =>
+{
+    const response = await fetch(`${API_URL}/messages/${id}`,
+    {
+        method: 'DELETE',
+    })
+
+    if (!response.ok)
+    {
+        throw new Error('Failed to delete message')
+    }
+
+    return response.json() 
+}
